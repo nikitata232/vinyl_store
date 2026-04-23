@@ -1,0 +1,67 @@
+version: '3.9'
+
+services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB:       vinyl_store
+      POSTGRES_USER:     postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Init scripts run once on empty volume, in alphabetical order
+      - ./docker/init-db.sh:/docker-entrypoint-initdb.d/01-init.sh
+      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d vinyl_store"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Django API ──────────────────────────────────────────────────────────
+  web:
+    build: .
+    command: >
+      sh -c "python /app/backend/manage.py migrate &&
+             python /app/migrate_data.py &&
+             python /app/backend/manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_NAME:                 vinyl_store
+      DB_USER:                 postgres
+      DB_PASSWORD:             postgres
+      DB_HOST:                 db
+      DB_PORT:                 5432
+      PYTHONPATH:              /app/backend
+      DJANGO_SETTINGS_MODULE:  backend.settings
+      FRONTEND_URL:            http://localhost:3000
+    restart: on-failure
+
+  # ── React Frontend ──────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./store
+      dockerfile: Dockerfile
+    volumes:
+      - ./store:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_API_URL: http://localhost:8000
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:

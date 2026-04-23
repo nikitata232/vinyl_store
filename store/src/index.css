@@ -1,0 +1,161 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0d0d0d;
+  --surface:  #161616;
+  --surface2: #1f1f1f;
+  --border:   #2a2a2a;
+  --accent:   #e8ff47;
+  --accent2:  #ff4757;
+  --text:     #f0ece4;
+  --muted:    #555;
+  --display:  'Bebas Neue', sans-serif;
+  --mono:     'DM Mono', monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+button { font-family: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; }
+
+/* ── Scrollbar ─────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ── Animations ────────────────────────── */
+@keyframes spin    { to { transform: rotate(360deg); } }
+@keyframes fadeUp  { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+@keyframes slideIn { from { opacity:0; transform:translateX(24px); } to { opacity:1; transform:translateX(0); } }
+@keyframes pulse   { 0%,100% { opacity:1; } 50% { opacity:.3; } }
+
+.fade-up  { animation: fadeUp  .3s ease; }
+.slide-in { animation: slideIn .25s ease; }
+
+/* ── Button ─────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  font-size: .72rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: transparent;
+  transition: background .15s, color .15s;
+}
+.btn:hover  { background: var(--accent); color: var(--bg); }
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .3; pointer-events: none; }
+
+.btn-ghost  { border-color: var(--border); color: var(--muted); }
+.btn-ghost:hover { border-color: var(--text); color: var(--text); background: transparent; }
+
+.btn-danger { border-color: var(--accent2); color: var(--accent2); }
+.btn-danger:hover { background: var(--accent2); color: #fff; }
+
+.btn-sm { padding: 7px 14px; font-size: .65rem; }
+
+/* ── Form elements ──────────────────────── */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.label {
+  font-size: .6rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+input, select {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: .8rem;
+  padding: 10px 14px;
+  outline: none;
+  width: 100%;
+  transition: border-color .2s;
+}
+input:focus, select:focus { border-color: var(--accent); }
+input::placeholder { color: var(--muted); }
+select option { background: var(--surface); }
+
+/* ── Spinner ─────────────────────────────── */
+.spinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  flex-shrink: 0;
+}
+
+/* ── Vinyl disc ─────────────────────────── */
+.disc {
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #1c1c1c 0deg, #2a2a2a 20deg, #1c1c1c 40deg,
+    #2a2a2a 60deg, #1c1c1c 80deg, #2a2a2a 100deg,
+    #1c1c1c 120deg, #2a2a2a 140deg, #1c1c1c 160deg,
+    #2a2a2a 180deg, #1c1c1c 200deg, #2a2a2a 220deg,
+    #1c1c1c 240deg, #2a2a2a 260deg, #1c1c1c 280deg,
+    #2a2a2a 300deg, #1c1c1c 320deg, #2a2a2a 340deg, #1c1c1c 360deg
+  );
+  position: relative;
+  flex-shrink: 0;
+  transition: box-shadow .2s;
+}
+.disc::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ── Page title ─────────────────────────── */
+.page-title {
+  font-family: var(--display);
+  font-size: 3rem;
+  line-height: 1;
+  letter-spacing: 1px;
+}
+.route-badge {
+  font-size: .62rem;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 3px 10px;
+  border-radius: 2px;
+  letter-spacing: 1px;
+}
+
+/* ── Empty state ────────────────────────── */
+.empty {
+  text-align: center;
+  padding: 80px 40px;
+  color: var(--muted);
+  font-size: .8rem;
+  letter-spacing: 1px;
+}
+.empty-icon { font-size: 3rem; opacity: .25; display: block; margin-bottom: 16px; }
+
+/* ── Status dot ─────────────────────────── */
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent2);
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+.dot.ok { background: var(--accent); }
