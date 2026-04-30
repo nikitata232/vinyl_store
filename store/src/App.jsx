@@ -8,6 +8,7 @@ import AuthPage from './pages/AuthPage'
 import CartPage from './pages/CartPage'
 import MyOrdersPage from './pages/MyOrdersPage'
 import RecommendPage from './pages/RecommendPage'
+import AdminPage from './pages/AdminPage'
 
 export const AuthCtx  = createContext(null)
 export const ToastCtx = createContext(null)
@@ -130,6 +131,7 @@ export default function App() {
             {page === 'cart'     && <CartPage      nav={nav} />}
             {page === 'orders'   && <MyOrdersPage  nav={nav} />}
             {page === 'auth'     && <AuthPage      nav={nav} />}
+            {page === 'admin'    && <AdminPage     nav={nav} />}
           </main>
 
           {toast && <Toast msg={toast.msg} type={toast.type} />}

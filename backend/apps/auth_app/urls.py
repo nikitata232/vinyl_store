@@ -12,4 +12,11 @@ urlpatterns = [
     path('recommend', views.RecommendView.as_view()),
     path('recommend/genres', views.RecommendGenresView.as_view()),
     path('recommend/artists', views.RecommendArtistsView.as_view()),
+    # Admin
+    path('admin/orders', views.AdminOrdersView.as_view()),
+    path('admin/users', views.AdminUsersView.as_view()),
+    path('admin/vinyls', views.AdminVinylView.as_view()),
+    path('admin/vinyls/<int:vinyl_id>', views.AdminVinylDetailView.as_view()),
+    path('admin/artists', views.AdminArtistsView.as_view()),
+    path('admin/genres', views.AdminGenresView.as_view()),
 ]

@@ -7,28 +7,31 @@ const S = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '18px 40px',
+    padding: '16px 40px',
     borderBottom: '1px solid var(--border)',
     position: 'sticky',
     top: 0,
-    background: 'var(--bg)',
+    background: 'rgba(13,13,13,.9)',
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
     zIndex: 100,
     gap: 24,
   },
   logo: {
     fontFamily: 'var(--display)',
-    fontSize: '2rem',
-    letterSpacing: 2,
+    fontSize: '1.9rem',
+    letterSpacing: 3,
     color: 'var(--accent)',
     cursor: 'pointer',
     flexShrink: 0,
     lineHeight: 1,
+    userSelect: 'none',
   },
-  logoSpan: { color: 'var(--text)' },
+  logoSpan: { color: 'var(--text)', opacity: .7 },
   nav: { display: 'flex', flex: 1, justifyContent: 'center' },
   tab: {
-    padding: '14px 24px',
-    fontSize: '.7rem',
+    padding: '12px 20px',
+    fontSize: '.68rem',
     letterSpacing: 2,
     textTransform: 'uppercase',
     background: 'none',
@@ -37,22 +40,33 @@ const S = {
     cursor: 'pointer',
     borderBottom: '2px solid transparent',
     transition: 'color .2s, border-color .2s',
+    whiteSpace: 'nowrap',
   },
   tabActive: { color: 'var(--accent)', borderBottomColor: 'var(--accent)' },
-  right: { display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 },
-  status: { display: 'flex', alignItems: 'center', gap: 8, fontSize: '.62rem', color: 'var(--muted)', letterSpacing: 1 },
-  user: { fontSize: '.68rem', color: 'var(--muted)', letterSpacing: 1, textTransform: 'uppercase' },
+  right: { display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0 },
+  status: {
+    display: 'flex', alignItems: 'center', gap: 7,
+    fontSize: '.6rem', color: 'var(--muted)', letterSpacing: 1,
+  },
+  user: {
+    fontSize: '.67rem', color: 'var(--muted)',
+    letterSpacing: 1, textTransform: 'uppercase',
+    background: 'var(--surface2)',
+    padding: '4px 10px',
+    border: '1px solid var(--border)',
+  },
   cartBadge: {
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 18, height: 18,
-    fontSize: '.6rem',
+    width: 17, height: 17,
+    fontSize: '.58rem',
     background: 'var(--accent)',
     color: 'var(--bg)',
     borderRadius: '50%',
-    marginLeft: 4,
+    marginLeft: 5,
     fontFamily: 'var(--mono)',
+    flexShrink: 0,
   },
 }
 
@@ -75,6 +89,7 @@ export default function Header({ page, nav, cartCount }) {
     { id: 'recommend', label: 'Подобрать' },
     { id: 'cart',      label: 'Корзина', badge: cartCount || null },
     ...(user ? [{ id: 'orders', label: 'Заказы' }] : []),
+    ...(user?.is_admin ? [{ id: 'admin', label: 'Админ' }] : []),
   ]
 
   return (
@@ -99,7 +114,7 @@ export default function Header({ page, nav, cartCount }) {
       <div style={S.right}>
         <div style={S.status}>
           <span className={`dot ${online === true ? 'ok' : ''}`} />
-          <span>{online === null ? 'CONNECTING' : online ? 'API ONLINE' : 'API OFFLINE'}</span>
+          <span>{online === null ? 'CONNECTING' : online ? 'ONLINE' : 'OFFLINE'}</span>
         </div>
 
         {user ? (

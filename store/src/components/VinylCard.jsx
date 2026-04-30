@@ -44,8 +44,8 @@ function extractDiscColors(imgEl) {
 }
 
 export default function VinylCard({ vinyl, onOpen, onAdd }) {
-  const [hover,    setHover]    = useState(false)
-  const [artErr,   setArtErr]   = useState(false)
+  const [hover,      setHover]      = useState(false)
+  const [artErr,     setArtErr]     = useState(false)
   const [discColors, setDiscColors] = useState(null)
 
   const artSrc = `/covers/${vinyl.id}.jpg`
@@ -82,6 +82,7 @@ export default function VinylCard({ vinyl, onOpen, onAdd }) {
         borderRight: '1px solid var(--border)',
         display: 'flex',
         flexDirection: 'column',
+        transition: 'background .2s',
       }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
@@ -102,6 +103,7 @@ export default function VinylCard({ vinyl, onOpen, onAdd }) {
               alt={vinyl.title}
               onError={() => setArtErr(true)}
               onLoad={handleImgLoad}
+              crossOrigin="anonymous"
               style={{
                 position: 'absolute',
                 inset: 0,
@@ -110,7 +112,7 @@ export default function VinylCard({ vinyl, onOpen, onAdd }) {
                 objectFit: 'cover',
                 transition: 'transform .4s ease, filter .3s',
                 transform: hover ? 'scale(1.06)' : 'scale(1)',
-                filter: hover ? 'brightness(.6)' : 'brightness(1)',
+                filter: hover ? 'brightness(.55)' : 'brightness(1)',
               }}
             />
             {/* Spinning disc overlay on hover */}
@@ -126,16 +128,15 @@ export default function VinylCard({ vinyl, onOpen, onAdd }) {
               <div
                 className="disc"
                 style={{
-                  width: 72, height: 72,
-                  animation: hover ? 'spin 3s linear infinite' : 'none',
-                  boxShadow: '0 0 32px rgba(0,0,0,.8)',
+                  width: 76, height: 76,
+                  animation: hover ? 'spin 2.5s linear infinite' : 'none',
+                  boxShadow: '0 0 40px rgba(0,0,0,.9)',
                   ...discStyle,
                 }}
               />
             </div>
           </>
         ) : (
-          /* Fallback: vinyl disc */
           <div style={{
             position: 'absolute',
             inset: 0,
@@ -146,9 +147,9 @@ export default function VinylCard({ vinyl, onOpen, onAdd }) {
             <div
               className="disc"
               style={{
-                width: 72, height: 72,
-                animation: hover ? 'spin 3s linear infinite' : 'none',
-                boxShadow: hover ? '0 0 20px rgba(232,255,71,.15)' : 'none',
+                width: 76, height: 76,
+                animation: hover ? 'spin 2.5s linear infinite' : 'none',
+                boxShadow: hover ? '0 0 24px rgba(232,255,71,.18)' : 'none',
                 ...discStyle,
               }}
             />
@@ -160,29 +161,54 @@ export default function VinylCard({ vinyl, onOpen, onAdd }) {
           <span style={{
             position: 'absolute',
             top: 10, left: 10,
-            fontSize: '.56rem',
+            fontSize: '.55rem',
             letterSpacing: 1,
             textTransform: 'uppercase',
-            background: 'rgba(0,0,0,.7)',
+            background: 'rgba(0,0,0,.75)',
             color: 'var(--muted)',
             padding: '3px 8px',
+            backdropFilter: 'blur(4px)',
           }}>
             {vinyl.genre}
+          </span>
+        )}
+
+        {/* Year badge */}
+        {vinyl.release_year && (
+          <span style={{
+            position: 'absolute',
+            top: 10, right: 10,
+            fontSize: '.55rem',
+            letterSpacing: 1,
+            background: 'rgba(0,0,0,.75)',
+            color: 'var(--accent)',
+            padding: '3px 8px',
+            backdropFilter: 'blur(4px)',
+          }}>
+            {vinyl.release_year}
           </span>
         )}
       </div>
 
       {/* Info */}
       <div style={{ padding: '14px 16px 16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-        <div style={{ fontSize: '.88rem', marginBottom: 3, lineHeight: 1.3 }}>{vinyl.title}</div>
-        <div style={{ fontSize: '.7rem', color: 'var(--muted)', marginBottom: 12 }}>{vinyl.artist}</div>
+        <div style={{ fontSize: '.88rem', marginBottom: 3, lineHeight: 1.3, fontWeight: 400 }}>
+          {vinyl.title}
+        </div>
+        <div style={{ fontSize: '.7rem', color: 'var(--muted)', marginBottom: 12 }}>
+          {vinyl.artist}
+        </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-          <span style={{ fontSize: '1rem', color: 'var(--accent)' }}>
+          <span style={{ fontSize: '1rem', color: 'var(--accent)', letterSpacing: .5 }}>
             {Number(vinyl.price).toLocaleString('ru-RU')} ₽
           </span>
-          <span style={{ fontSize: '.6rem', color: 'var(--muted)', letterSpacing: 1 }}>
-            {vinyl.stock} шт
+          <span style={{
+            fontSize: '.58rem',
+            color: vinyl.stock === 0 ? 'var(--accent2)' : 'var(--muted)',
+            letterSpacing: 1,
+          }}>
+            {vinyl.stock === 0 ? 'НЕТ' : `${vinyl.stock} шт`}
           </span>
         </div>
 
@@ -192,10 +218,9 @@ export default function VinylCard({ vinyl, onOpen, onAdd }) {
             marginTop: 12,
             width: '100%',
             justifyContent: 'center',
-            opacity: hover ? 1 : 0,
-            transform: hover ? 'translateY(0)' : 'translateY(6px)',
-            transition: 'opacity .2s, transform .2s',
-            pointerEvents: hover ? 'auto' : 'none',
+            opacity: hover ? 1 : .55,
+            transform: hover ? 'translateY(0)' : 'translateY(4px)',
+            transition: 'opacity .2s, transform .2s, background .15s, color .15s',
           }}
           onClick={(e) => { e.stopPropagation(); onAdd(vinyl) }}
           disabled={vinyl.stock === 0}

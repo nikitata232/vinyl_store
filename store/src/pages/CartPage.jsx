@@ -3,10 +3,10 @@ import { api } from '../api'
 import { useAuth, useCart, useToast } from '../App'
 
 export default function CartPage({ nav }) {
-  const { user }                            = useAuth()
+  const { user }                               = useAuth()
   const { cart, updateQty, removeFromCart, clearCart } = useCart()
-  const showToast                           = useToast()
-  const [loading, setLoading]               = useState(false)
+  const showToast                              = useToast()
+  const [loading, setLoading]                  = useState(false)
 
   const total = cart.reduce((s, i) => s + Number(i.price) * i.quantity, 0)
 
@@ -47,53 +47,69 @@ export default function CartPage({ nav }) {
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 32, flexWrap: 'wrap' }}>
         <h1 className="page-title">КОРЗИНА</h1>
         <span className="route-badge">POST /orders</span>
-        <button
-          className="btn btn-ghost btn-sm"
-          style={{ marginLeft: 'auto' }}
-          onClick={clearCart}
-        >
+        <span style={{ fontSize: '.65rem', color: 'var(--muted)', marginLeft: 'auto', letterSpacing: 1 }}>
+          {cart.length} {cart.length === 1 ? 'позиция' : 'позиций'}
+        </span>
+        <button className="btn btn-ghost btn-sm" onClick={clearCart}>
           Очистить
         </button>
       </div>
 
       {/* Items */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: 'var(--border)', border: '1px solid var(--border)', marginBottom: 28 }}>
-        {cart.map(item => (
+        {cart.map((item, idx) => (
           <div
             key={item.vinyl_id}
             style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr auto auto auto',
+              display: 'flex',
               alignItems: 'center',
               gap: 16,
-              padding: '16px 20px',
+              padding: '14px 20px',
               background: 'var(--surface)',
+              animation: `fadeUp .25s ease ${idx * 40}ms both`,
             }}
           >
+            {/* Cover thumbnail */}
+            <img
+              src={`/covers/${item.vinyl_id}.jpg`}
+              alt={item.title}
+              onError={(e) => { e.target.style.display = 'none' }}
+              style={{
+                width: 52, height: 52,
+                objectFit: 'cover',
+                flexShrink: 0,
+                background: 'var(--surface2)',
+                border: '1px solid var(--border)',
+              }}
+            />
+
             {/* Info */}
-            <div>
-              <div style={{ fontSize: '.9rem', marginBottom: 3 }}>{item.title}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: '.9rem', marginBottom: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {item.title}
+              </div>
               <div style={{ fontSize: '.7rem', color: 'var(--muted)' }}>{item.artist}</div>
             </div>
 
-            {/* Price */}
-            <span style={{ fontSize: '.85rem', color: 'var(--accent)', minWidth: 80, textAlign: 'right' }}>
+            {/* Price per unit */}
+            <span style={{ fontSize: '.82rem', color: 'var(--accent)', minWidth: 80, textAlign: 'right', flexShrink: 0 }}>
               {Number(item.price).toLocaleString('ru-RU')} ₽
             </span>
 
             {/* Qty controls */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 0, border: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--border)', flexShrink: 0 }}>
               <button
                 onClick={() => item.quantity === 1 ? removeFromCart(item.vinyl_id) : updateQty(item.vinyl_id, item.quantity - 1)}
                 style={{
                   width: 32, height: 32,
                   background: 'none', border: 'none',
                   color: 'var(--muted)', cursor: 'pointer',
-                  fontSize: '.9rem',
+                  fontSize: '1rem',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
                   transition: 'color .15s',
                 }}
-                onMouseEnter={e => e.target.style.color = 'var(--accent2)'}
-                onMouseLeave={e => e.target.style.color = 'var(--muted)'}
+                onMouseEnter={e => e.currentTarget.style.color = 'var(--accent2)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'var(--muted)'}
               >−</button>
               <span style={{
                 width: 36, textAlign: 'center',
@@ -111,17 +127,18 @@ export default function CartPage({ nav }) {
                   width: 32, height: 32,
                   background: 'none', border: 'none',
                   color: 'var(--muted)', cursor: 'pointer',
-                  fontSize: '.9rem',
+                  fontSize: '1rem',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
                   transition: 'color .15s',
                   opacity: item.quantity >= item.stock ? .3 : 1,
                 }}
-                onMouseEnter={e => { if (item.quantity < item.stock) e.target.style.color = 'var(--accent)' }}
-                onMouseLeave={e => e.target.style.color = 'var(--muted)'}
+                onMouseEnter={e => { if (item.quantity < item.stock) e.currentTarget.style.color = 'var(--accent)' }}
+                onMouseLeave={e => e.currentTarget.style.color = 'var(--muted)'}
               >+</button>
             </div>
 
             {/* Subtotal */}
-            <span style={{ fontSize: '.8rem', color: 'var(--muted)', minWidth: 80, textAlign: 'right' }}>
+            <span style={{ fontSize: '.8rem', color: 'var(--muted)', minWidth: 84, textAlign: 'right', flexShrink: 0 }}>
               {(Number(item.price) * item.quantity).toLocaleString('ru-RU')} ₽
             </span>
           </div>
@@ -139,13 +156,15 @@ export default function CartPage({ nav }) {
         flexWrap: 'wrap',
       }}>
         <div>
-          <div style={{ fontSize: '.6rem', letterSpacing: 2, color: 'var(--muted)', textTransform: 'uppercase', marginBottom: 4 }}>Итого</div>
+          <div style={{ fontSize: '.6rem', letterSpacing: 2, color: 'var(--muted)', textTransform: 'uppercase', marginBottom: 4 }}>
+            Итого
+          </div>
           <div style={{ fontFamily: 'var(--display)', fontSize: '2.2rem', color: 'var(--accent)', letterSpacing: 1 }}>
             {total.toLocaleString('ru-RU')} ₽
           </div>
         </div>
 
-        <button className="btn" onClick={checkout} disabled={loading}>
+        <button className="btn" style={{ padding: '12px 28px' }} onClick={checkout} disabled={loading}>
           {loading && <span className="spinner" />}
           {user ? 'Оформить заказ' : 'Войти и оформить'}
         </button>

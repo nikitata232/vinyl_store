@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'apps.auth_app',
+    'drf_spectacular',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -79,7 +80,14 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR.parent / 'static']
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Vinyl Store API',
+    'DESCRIPTION': 'API для магазина виниловых пластинок',
+    'VERSION': '1.0.0',
+}
+
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],

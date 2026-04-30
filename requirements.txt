@@ -5,8 +5,12 @@ djangorestframework-simplejwt==5.5.0
 asgiref==3.11.1
 psycopg==3.3.3
 psycopg-binary==3.3.3
+psycopg2-binary
 joblib==1.5.3
 numpy
+pandas
+scikit-learn
+drf-spectacular==0.28.0
 python-dotenv==1.2.2
 sqlparse==0.5.5
 tzdata==2025.3

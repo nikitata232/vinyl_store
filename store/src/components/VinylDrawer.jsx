@@ -82,6 +82,13 @@ export default function VinylDrawer({ vinyl, onClose, addToCart }) {
     )`,
   } : {}
 
+  const details = [
+    { key: 'Жанр',     val: vinyl.genre || '—',                              accent: false },
+    { key: 'Год',      val: vinyl.release_year || '—',                        accent: false },
+    { key: 'Цена',     val: `${Number(vinyl.price).toLocaleString('ru-RU')} ₽`, accent: true },
+    { key: 'Наличие',  val: vinyl.stock === 0 ? 'Нет' : `${vinyl.stock} шт`, accent: vinyl.stock === 0 },
+  ]
+
   return (
     <>
       {/* Backdrop */}
@@ -89,9 +96,9 @@ export default function VinylDrawer({ vinyl, onClose, addToCart }) {
         onClick={onClose}
         style={{
           position: 'fixed', inset: 0,
-          background: 'rgba(0,0,0,.65)',
+          background: 'rgba(0,0,0,.7)',
           zIndex: 200,
-          backdropFilter: 'blur(3px)',
+          backdropFilter: 'blur(4px)',
         }}
       />
 
@@ -120,6 +127,7 @@ export default function VinylDrawer({ vinyl, onClose, addToCart }) {
                 alt={vinyl.title}
                 onError={() => setArtErr(true)}
                 onLoad={handleImgLoad}
+                crossOrigin="anonymous"
                 style={{
                   position: 'absolute',
                   inset: 0,
@@ -129,7 +137,7 @@ export default function VinylDrawer({ vinyl, onClose, addToCart }) {
                 }}
               />
 
-              {/* Spinning disc overlay centred on cover */}
+              {/* Spinning disc overlay */}
               <div style={{
                 position: 'absolute',
                 inset: 0,
@@ -143,7 +151,7 @@ export default function VinylDrawer({ vinyl, onClose, addToCart }) {
                   style={{
                     width: 130, height: 130,
                     animation: 'spin 8s linear infinite',
-                    boxShadow: '0 0 50px rgba(0,0,0,.7)',
+                    boxShadow: '0 0 60px rgba(0,0,0,.8)',
                     opacity: discColors ? 1 : 0,
                     transition: 'opacity .4s',
                     ...discStyle,
@@ -171,12 +179,12 @@ export default function VinylDrawer({ vinyl, onClose, addToCart }) {
             </div>
           )}
 
-          {/* Gradient overlay for readability */}
+          {/* Bottom gradient */}
           {showArt && (
             <div style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(to bottom, rgba(0,0,0,.3) 0%, rgba(0,0,0,.0) 40%, rgba(13,13,13,.9) 100%)',
+              background: 'linear-gradient(to bottom, rgba(0,0,0,.25) 0%, transparent 40%, rgba(13,13,13,.95) 100%)',
               pointerEvents: 'none',
             }} />
           )}
@@ -192,17 +200,18 @@ export default function VinylDrawer({ vinyl, onClose, addToCart }) {
             <span style={{
               fontSize: '.58rem', letterSpacing: 2,
               textTransform: 'uppercase',
-              background: 'rgba(0,0,0,.6)',
+              background: 'rgba(0,0,0,.65)',
               color: 'var(--muted)',
               padding: '3px 8px',
+              backdropFilter: 'blur(4px)',
             }}>
               ID #{vinyl.id}
             </span>
             <button
               onClick={onClose}
               style={{
-                background: 'rgba(0,0,0,.5)',
-                border: '1px solid rgba(255,255,255,.1)',
+                background: 'rgba(0,0,0,.55)',
+                border: '1px solid rgba(255,255,255,.12)',
                 color: 'var(--text)',
                 width: 30, height: 30,
                 cursor: 'pointer',
@@ -211,6 +220,8 @@ export default function VinylDrawer({ vinyl, onClose, addToCart }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderRadius: 2,
+                backdropFilter: 'blur(4px)',
+                transition: 'background .15s',
               }}
             >
               ✕
@@ -228,7 +239,7 @@ export default function VinylDrawer({ vinyl, onClose, addToCart }) {
                 fontSize: '2rem',
                 lineHeight: 1,
                 letterSpacing: 1,
-                textShadow: '0 2px 8px rgba(0,0,0,.8)',
+                textShadow: '0 2px 12px rgba(0,0,0,.9)',
                 marginBottom: 4,
               }}>
                 {vinyl.title}
@@ -243,7 +254,7 @@ export default function VinylDrawer({ vinyl, onClose, addToCart }) {
         {/* Content */}
         <div style={{ padding: '24px 24px 32px', display: 'flex', flexDirection: 'column', gap: 24, flex: 1 }}>
 
-          {/* Title (when no art) */}
+          {/* Title when no art */}
           {!showArt && (
             <div>
               <div style={{
@@ -267,16 +278,17 @@ export default function VinylDrawer({ vinyl, onClose, addToCart }) {
             background: 'var(--border)',
             border: '1px solid var(--border)',
           }}>
-            {[
-              { key: 'Жанр',      val: vinyl.genre || '—',                              accent: false },
-              { key: 'Цена',      val: `${Number(vinyl.price).toLocaleString('ru-RU')} ₽`, accent: true  },
-              { key: 'В наличии', val: `${vinyl.stock} шт`,                              accent: !inStock },
-            ].map(({ key, val, accent }) => (
+            {details.map(({ key, val, accent }) => (
               <div key={key} style={{ background: 'var(--surface)', padding: '14px 16px' }}>
-                <div style={{ fontSize: '.56rem', letterSpacing: 2, color: 'var(--muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                <div style={{ fontSize: '.55rem', letterSpacing: 2, color: 'var(--muted)', textTransform: 'uppercase', marginBottom: 6 }}>
                   {key}
                 </div>
-                <div style={{ fontSize: '.95rem', color: accent ? 'var(--accent)' : 'var(--text)' }}>
+                <div style={{
+                  fontSize: '.95rem',
+                  color: accent
+                    ? (vinyl.stock === 0 && key === 'Наличие' ? 'var(--accent2)' : 'var(--accent)')
+                    : 'var(--text)',
+                }}>
                   {val}
                 </div>
               </div>

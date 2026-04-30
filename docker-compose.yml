@@ -29,6 +29,8 @@ services:
     command: >
       sh -c "python /app/backend/manage.py migrate &&
              python /app/migrate_data.py &&
+             python /app/train_model.py &&
+             python /app/create_superuser.py &&
              python /app/backend/manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
